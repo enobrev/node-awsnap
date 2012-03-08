@@ -25,17 +25,25 @@ AWSnap.prototype.getActivePrivateServerIPsByName = function(sName, fCallback) {
         } else {
             if (oResponse.reservationSet !== undefined) {
                 if (oResponse.reservationSet.item !== undefined) {
-                    var aInstances = oResponse.reservationSet.item;
+                    var aInstanceSets = oResponse.reservationSet.item;
 
-                    if (!Array.isArray(aInstances)) {
-                        aInstances = [aInstances];
+                    if (!Array.isArray(aInstanceSets)) {
+                        aInstanceSets = [aInstanceSets];
                     }
 
-                    if (aInstances.length) {
+                    if (aInstanceSets.length) {
                         var aServers = [];
-                        for (var i in aInstances) {
-                            var oInstance = aInstances[i].instancesSet.item;
-                            aServers.push(oInstance.privateIpAddress);
+                        for (var i in aInstanceSets) {
+                            var aInstanceSet = aInstanceSets[i].instancesSet.item;
+
+                            if (!Array.isArray(aInstanceSet)) {
+                                aInstanceSet = [aInstanceSet];
+                            }
+
+                            for (var j in aInstanceSet) {
+                                var oInstance = aInstanceSet[j];
+                                aServers.push(oInstance.privateIpAddress);
+                            }
                         }
 
                         fCallback(aServers);
@@ -60,26 +68,40 @@ AWSnap.prototype.getServerIPsGroupedByName = function(fCallback) {
     	} else {
             if (oResponse.reservationSet !== undefined) {
                 if (oResponse.reservationSet.item !== undefined) {
-                    var aInstances = oResponse.reservationSet.item;
-                    if (aInstances.length) {
+                    var aInstanceSets = oResponse.reservationSet.item;
+
+                    if (!Array.isArray(aInstanceSets)) {
+                        aInstanceSets = [aInstanceSets];
+                    }
+
+                    if (aInstanceSets.length) {
                         var oHosts  = {};
-                        for (var i in aInstances) {
-                            var oInstance = aInstances[i].instancesSet.item;
-                            var oTags     = oInstance.tagSet;
-                            var sName     = '';
-                            for (var i in oTags) {
-                                if (oTags.item.key == 'Name') {
-                                    sName = oTags.item.value;
-                                    break;
-                                }
+                        for (var i in aInstanceSets) {
+                            var aInstanceSet = aInstanceSets[i].instancesSet.item;
+
+                            if (!Array.isArray(aInstanceSet)) {
+                                aInstanceSet = [aInstanceSet];
                             }
 
-                            if (sName.length) {
-                                if (oHosts[sName] === undefined) {
-                                    oHosts[sName] = {name: sName, servers: []}
+                            for (var j in aInstanceSet) {
+                                var oInstance = aInstanceSet[j];
+
+                                var oTags     = oInstance.tagSet;
+                                var sName     = '';
+                                for (var i in oTags) {
+                                    if (oTags.item.key == 'Name') {
+                                        sName = oTags.item.value;
+                                        break;
+                                    }
                                 }
 
-                                oHosts[sName].servers.push(oInstance.ipAddress);
+                                if (sName.length) {
+                                    if (oHosts[sName] === undefined) {
+                                        oHosts[sName] = {name: sName, servers: []}
+                                    }
+
+                                    oHosts[sName].servers.push(oInstance.ipAddress);
+                                }
                             }
                         }
 
