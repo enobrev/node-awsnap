@@ -1,4 +1,3 @@
-
     var aws         = require('aws2js');
 
     var AWSnap = function(config) {
@@ -9,7 +8,7 @@
         return aws.load('ec2', this.config.key, this.config.secret);
     };
 
-    AWSnap.prototype.getServersByName = function(sName, fCallback) {
+    AWSnap.prototype.getActivePrivateServerIPsByName = function(sName, fCallback) {
         fCallback = typeof fCallback == 'function' ? fCallback  : function() {};
 
         var oEC2 = this.getEC2();
