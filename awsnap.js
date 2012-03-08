@@ -16,7 +16,9 @@ AWSnap.prototype.getActivePrivateServerIPsByName = function(sName, fCallback) {
     // call something of the EC2 query API
     oEC2.request('DescribeInstances', {
         'Filter.1.Name':    'tag:Name',
-        'Filter.1.Value.1': sName
+        'Filter.1.Value.1': sName,
+        'Filter.2.Name':    'instance-state-name',
+        'Filter.2.Value.1': 'running'
     }, function (error, oResponse) {
         if (error) {
             console.error(error);
@@ -33,10 +35,7 @@ AWSnap.prototype.getActivePrivateServerIPsByName = function(sName, fCallback) {
                         var aServers = [];
                         for (var i in aInstances) {
                             var oInstance = aInstances[i].instancesSet.item;
-
-                            if (oInstance.instanceState.name == 'running') {
-                                aServers.push(oInstance.privateIpAddress);
-                            }
+                            aServers.push(oInstance.privateIpAddress);
                         }
 
                         fCallback(aServers);
@@ -52,7 +51,10 @@ AWSnap.prototype.getServerIPsGroupedByName = function(fCallback) {
 
     var oEC2 = this.getEC2();
 
-    oEC2.request('DescribeInstances', function (error, oResponse) {
+    oEC2.request('DescribeInstances', {
+        'Filter.1.Name':    'instance-state-name',
+        'Filter.1.Value.1': 'running'
+    }, function (error, oResponse) {
     	if (error) {
     		console.error(error);
     	} else {
