@@ -1,0 +1,16 @@
+{
+    "author": "Mark Armendariz <src@enobrev.com> (http://enobrev.com/)",
+    "name": "awsnap",
+    "description": "aws2js wrapper library to make some things easier",
+    "version": "0.0.3",
+    "homepage": "http://enobrev.com/",
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/enobrev/node-awsnap.git"
+    },
+    "main" : "./awsnap.js",
+    "dependencies": {
+        "aws2js": ">=0.6.6"
+    }
+
+}
