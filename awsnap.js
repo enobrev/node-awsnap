@@ -55,7 +55,15 @@ AWSnap.prototype.getActivePrivateServerIPsByName = function(sName, fCallback) {
 };
 
 AWSnap.prototype.getServerIPsGroupedByName = function(fCallback) {
+    return this.getServerFieldsGroupedByName('ipAddress', fCallback);
+};
+
+AWSnap.prototype.getServerFieldsGroupedByName = function(aFields, fCallback) {
     fCallback = typeof fCallback == 'function' ? fCallback  : function() {};
+
+    if (!Array.isArray(aFields)) {
+        aFields = [aFields];
+    }
 
     var oEC2 = this.getEC2();
 
@@ -100,7 +108,16 @@ AWSnap.prototype.getServerIPsGroupedByName = function(fCallback) {
                                         oHosts[sName] = {name: sName, servers: []}
                                     }
 
-                                    oHosts[sName].servers.push(oInstance.ipAddress);
+                                    if (aFields.length == 1) {
+                                        oHosts[sName].servers.push(oInstance[aFields[0]]);
+                                    } else {
+                                        var oValue = {};
+                                        for (var i in aFields) {
+                                            oValue[aFields[i]] = oInstance[aFields[i]];
+                                        }
+
+                                        oHosts[sName].servers.push(oValue);
+                                    }
                                 }
                             }
                         }
