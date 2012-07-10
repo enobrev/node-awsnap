@@ -10,7 +10,7 @@
     },
     "main" : "./awsnap.js",
     "dependencies": {
-        "aws2js": ">=0.6.6"
+        "aws.js": "git://github.com/enobrev/aws.js.git"
     }
 
 }

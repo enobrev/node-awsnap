@@ -1,11 +1,11 @@
-var aws         = require('aws2js');
+var aws         = require('aws.js');
 
 var AWSnap = function(config) {
     this.config = config;
 };
 
 AWSnap.prototype.getEC2 = function() {
-    return aws.load('ec2', this.config.key, this.config.secret);
+    return  aws.createClient(this.config.secret, this.config.key, 'ec2.amazonaws.com');
 };
 
 AWSnap.prototype.getActivePrivateServerIPsByName = function(sName, fCallback) {
@@ -14,7 +14,7 @@ AWSnap.prototype.getActivePrivateServerIPsByName = function(sName, fCallback) {
     var oEC2 = this.getEC2();
 
     // call something of the EC2 query API
-    oEC2.request('DescribeInstances', {
+    oEC2.run('/', 'DescribeInstances', {
         'Filter.1.Name':    'tag:Name',
         'Filter.1.Value.1': sName,
         'Filter.2.Name':    'instance-state-name',
@@ -67,7 +67,7 @@ AWSnap.prototype.getServerFieldsGroupedByName = function(aFields, fCallback) {
 
     var oEC2 = this.getEC2();
 
-    oEC2.request('DescribeInstances', {
+    oEC2.run('/', 'DescribeInstances', {
         'Filter.1.Name':    'instance-state-name',
         'Filter.1.Value.1': 'running'
     }, function (error, oResponse) {
