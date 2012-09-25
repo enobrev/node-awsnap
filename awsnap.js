@@ -96,10 +96,19 @@ AWSnap.prototype.getServerFieldsGroupedByName = function(aFields, fCallback) {
 
                                 var oTags     = oInstance.tagSet;
                                 var sName     = '';
-                                for (var i in oTags) {
-                                    if (oTags.item.key == 'Name') {
-                                        sName = oTags.item.value;
-                                        break;
+                                for (var k in oTags) {
+                                    var aTags = oTags[k];
+
+                                    if (!Array.isArray(aTags)) {
+                                        aTags = [aTags];
+                                    }
+
+                                    for (var m in aTags) {
+                                        var oTag = aTags[m];
+                                        if (oTag.key == 'Name') {
+                                            sName = oTag.value;
+                                            break;
+                                        }
                                     }
                                 }
 
